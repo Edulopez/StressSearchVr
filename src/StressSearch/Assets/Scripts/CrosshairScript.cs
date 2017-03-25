@@ -21,6 +21,8 @@ public class CrosshairScript : MonoBehaviour
     public AudioClip AimSound3;
     private bool isAimSoundPlayed = false;
     private bool isAimSoundPlayedFirstTime = false;
+    private bool isActionDone;
+
     // Use this for initialization
     void Start()
     {
@@ -77,18 +79,31 @@ public class CrosshairScript : MonoBehaviour
         if (hitObject != _ObservedObject)
             StopObserveObject();
 
-        if (_timeOBserving / ObserveTimeThreshold >= 1)
-        {
-            PlayAimSound();
-        }
+        UseObservableObject(hitObject, _timeOBserving / ObserveTimeThreshold >= 1);
         ObserveObject(hitObject);
 
         // for this example, the bar display is linked to the current time,
-     // however you would set this value based on your desired display
-     // eg, the loading progress, the player's health, or whatever.
+        // however you would set this value based on your desired display
+        // eg, the loading progress, the player's health, or whatever.
         //RotateObject(hitObject);
     }
-    
+
+    void UseObservableObject(GameObject obj, bool thresholgComplete)
+    {
+        if (!thresholgComplete) return;
+        if (obj == null) return;
+        var actions = obj.GetComponent<IObservedAction>();
+        if (actions == null) return;
+
+        if (actions.HasAction)
+        {
+            DoObserableObjectAction(actions);
+        }
+        else
+            PlayAimSound();
+
+    }
+
     void PlayAimSound()
     {
         if (isAimSoundPlayed)
@@ -103,6 +118,18 @@ public class CrosshairScript : MonoBehaviour
         }
         AudioClip[] clips = new AudioClip[] { AimSound1, AimSound2, AimSound3 };
         this.GetComponent<AudioSource>().PlayOneShot(clips[Random.Range(0, clips.Length - 1)]);
+    }
+    void DoObserableObjectAction( IObservedAction actions)
+    {
+        if (isActionDone == true) return;
+        if (!actions.HasAction) return;
+
+        isActionDone = true;
+
+        if (actions is SwitchBehaviour)
+            ((SwitchBehaviour)actions).DoAction();
+        else
+            actions.DoAction();
     }
     private GameObject GetHitObject()
     {
@@ -132,7 +159,7 @@ public class CrosshairScript : MonoBehaviour
             return;
         }
         var actions = _ObservedObject.GetComponent<IObservedAction>();
-        if (actions != null && actions.isObservable)
+        if (actions != null && actions.IsObservable)
         {
             actions.BeingObserved();
             IncreaseObserveProgressBar();
@@ -145,6 +172,7 @@ public class CrosshairScript : MonoBehaviour
 
     private void StopObserveObject()
     {
+        isActionDone = false;
         ResetObserveProgressBar();
         if (_ObservedObject == null)
         {

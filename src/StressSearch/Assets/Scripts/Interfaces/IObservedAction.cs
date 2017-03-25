@@ -9,5 +9,10 @@ public interface IObservedAction
 
     void StopedBeingObserved();
 
-    bool isObservable { get;  }
+    void DoAction();
+
+    bool IsObservable { get;  }
+
+    bool HasAction { get; }
+    bool HasAnimation{ get; }
 }
