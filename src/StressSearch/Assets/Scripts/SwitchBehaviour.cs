@@ -29,6 +29,13 @@ public class SwitchBehaviour : GeneralObservedAction {
     public new void DoAction()
     {
         if (IsActionDone) return;
+
+        IsActionDone = true;
         ChangeLightsStatus(true);
+
+        var audioSource = this.GetComponent<AudioSource>();
+        if (audioSource != null && audioSource.isPlaying == false)
+            audioSource.Play();
+
     }
 }
