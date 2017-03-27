@@ -5,20 +5,23 @@ using UnityEngine.UI;
 public class LevelManager : MonoBehaviour {
 
     public Text countDownText;
-    private static float timer = 0;
+    private static float _timer = 0;
     public float maxTime = 0;
     public AudioClip finalSound;
 
-    private bool DoorClosingClipPlayed = false;
-    public static float GameTimer { get { return timer; } private set { } }
+    private bool _DoorClosingClipPlayed = false;
+    public static float GameTimer { get { return _timer; } private set { } }
 
 
     public AudioClip DoorClosing;
     public GameObject Door;
-    private bool DoorAnimUsed = false;
+    private bool _DoorAnimUsed = false;
 
     public GameObject OverHereObject;
     private bool _isOverHereUsed = false;
+
+    public GameObject Human;
+    private bool _HumanAnimUsed = false;
     // Use this for initialization
     void Start () {
 	
@@ -34,26 +37,37 @@ public class LevelManager : MonoBehaviour {
     private void TimeEvents()
     {
        
-        if (DoorAnimUsed == false && ((int)(maxTime - timer)) == 75)
+        if (_DoorAnimUsed == false && ((int)(maxTime - _timer)) == 75)
         {
-            DoorAnimUsed = true;
+            _DoorAnimUsed = true;
             Door.GetComponent<Animator>().SetBool("Open", true);
             //Door.GetComponent<AudioSource>().Play();
         }
-        if (_isOverHereUsed == false && ((int)(maxTime - timer)) == 45)
+        if (_HumanAnimUsed == false && ((int)(maxTime - _timer)) == 65)
+        {
+            //Human.GetComponent<Animator>().SetBool("Translation", true);
+            Human.GetComponent<Animation>().Play();
+            _HumanAnimUsed = true;
+        }
+        if (_HumanAnimUsed == true && ((int)(maxTime - _timer)) == 10)
+        {
+            Destroy(Human);
+            _HumanAnimUsed = true;
+        }
+        if (_isOverHereUsed == false && ((int)(maxTime - _timer)) == 45)
         {
             OverHereObject.GetComponent<AudioSource>().Play();
             _isOverHereUsed = true;
         }
-            if (DoorAnimUsed == true && ((int)(maxTime - timer)) == 40)
+        if (_DoorAnimUsed == true && ((int)(maxTime - _timer)) == 40)
         {
-            DoorAnimUsed = false;
+            _DoorAnimUsed = false;
             Door.GetComponent<Animator>().SetBool("Open", false);
 
         }
-        if (DoorAnimUsed == false && DoorClosingClipPlayed == false && ((int)(maxTime - timer)) == 37)
+        if (_DoorAnimUsed == false && _DoorClosingClipPlayed == false && ((int)(maxTime - _timer)) == 37)
         {
-            DoorClosingClipPlayed = true;
+            _DoorClosingClipPlayed = true;
             this.GetComponent<AudioSource>().PlayOneShot(DoorClosing);
         }
 
@@ -61,10 +75,10 @@ public class LevelManager : MonoBehaviour {
 
     void UpdateTime()
     {
-        if (timer < maxTime)
+        if (_timer < maxTime)
         {
-            countDownText.text = ((int)(maxTime - timer)).ToString();
-            if (timer >= (maxTime / 4))
+            countDownText.text = ((int)(maxTime - _timer)).ToString();
+            if (_timer >= (maxTime / 4))
                 countDownText.color = new Color(255, 0, 0);
 
         }
@@ -74,7 +88,7 @@ public class LevelManager : MonoBehaviour {
 
         }
         // increment timer over time
-        timer += Time.deltaTime;
+        _timer += Time.deltaTime;
     }
 
     IEnumerator EndGame()
