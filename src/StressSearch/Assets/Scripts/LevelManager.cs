@@ -47,6 +47,7 @@ public class LevelManager : MonoBehaviour {
         {
             //Human.GetComponent<Animator>().SetBool("Translation", true);
             Human.GetComponent<Animation>().Play();
+            Human.GetComponent<AudioSource>().Play();
             _HumanAnimUsed = true;
         }
         if (_HumanAnimUsed == true && ((int)(maxTime - _timer)) == 10)
