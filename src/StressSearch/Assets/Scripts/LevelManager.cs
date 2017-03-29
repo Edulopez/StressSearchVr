@@ -12,6 +12,8 @@ public class LevelManager : MonoBehaviour {
     private bool _DoorClosingClipPlayed = false;
     public static float GameTimer { get { return _timer; } private set { } }
 
+    public GameObject Switch;
+    private bool _IsSwitchUsed = false;
 
     public AudioClip DoorClosing;
     public GameObject Door;
@@ -36,11 +38,17 @@ public class LevelManager : MonoBehaviour {
 
     private void TimeEvents()
     {
-       
+
         if (_DoorAnimUsed == false && ((int)(maxTime - _timer)) == 75)
         {
             _DoorAnimUsed = true;
             Door.GetComponent<Animator>().SetBool("Open", true);
+            //Door.GetComponent<AudioSource>().Play();
+        }
+        if (_IsSwitchUsed == false && ((int)(maxTime - _timer)) == 170)
+        {
+            var action = Switch.GetComponent<SwitchBehaviour>();
+            action.DoAction();
             //Door.GetComponent<AudioSource>().Play();
         }
         if (_HumanAnimUsed == false && ((int)(maxTime - _timer)) == 65)
@@ -55,7 +63,7 @@ public class LevelManager : MonoBehaviour {
             Destroy(Human);
             _HumanAnimUsed = true;
         }
-        if (_isOverHereUsed == false && ((int)(maxTime - _timer)) == 45)
+        if (_isOverHereUsed == false && ((int)(maxTime - _timer)) == 90)
         {
             OverHereObject.GetComponent<AudioSource>().Play();
             _isOverHereUsed = true;

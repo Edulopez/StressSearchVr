@@ -27,6 +27,7 @@ public class EchoSoundBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        return;
 
         if (!Microphone.IsRecording(deviceName) )
         {
